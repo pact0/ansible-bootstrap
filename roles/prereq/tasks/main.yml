@@ -1,0 +1,10 @@
+- import_tasks: ubuntu/deps.yml
+  when: system == "ubuntu"
+
+
+
+- import_tasks: arch/deps.yml
+  when: system == "arch"
+
+
+- import_tasks: timezone.yml

@@ -1,0 +1,64 @@
+---
+
+- name: Check if Tmux Plugin Manager is installed
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.tmux/plugins/"
+  register: tmux_plugin_path
+
+- name: Create directory for Tmux Plugin Manager
+  file:
+    path:  "{{ lookup('env','HOME') }}/.tmux/plugins"
+    state: directory
+  when: tmux_plugin_path is not defined
+      
+- name: Download Tmux Plugin Manager
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ lookup('env','HOME') }}/.tmux/plugins/tpm"
+    # owner: "{{ansible_user}}"
+    # group: "{{ansible_user}}"
+    # mode: 0755
+    clone: true
+    update: true
+  when: tmux_plugin_path is not defined
+#
+# - name: Download Tmux Plugin Manager
+#   get_url:
+#     url: https://github.com/tmux-plugins/tpm
+#     dest: "{{ lookup('env','HOME') }}/.tmux/plugins/tpm"
+#     owner: "{{ansible_user}}"
+#     group: "{{ansible_user}}"
+#     mode: 0755
+#   when: ansible_facts.architecture == "x86_64"
+
+
+- name: Is neovim installed
+  shell: command -v nvim
+  register: nvim_exists
+  ignore_errors: true
+
+- name: Download Neovim
+  git:
+    repo: https://github.com/neovim/neovim.git
+    dest: "{{ lookup('env','HOME') }}/neovim"
+    clone: true
+    update: true
+  when: nvim_exists is not defined
+
+- name: Running "make" for Neovim
+  command: "{{ item }} chdir={{ lookup('env','HOME') }}/neovim"
+  with_items:
+    - make
+  when: nvim_exists is not defined
+
+- name: Running "make install" for Neovim
+  command: "make install chdir={{ lookup('env','HOME') }}/neovim"
+  when: nvim_exists is not defined
+
+- name: Remove neovim install catalog
+  file:
+    path: "{{ lookup('env','HOME') }}/neovim"
+    state: absent
+  when: nvim_exists is not defined
+
+

@@ -1,0 +1,11 @@
+---
+
+- name: Download Tmux
+  get_url:
+    url: https://github.com/tmux-plugins/tpm
+    dest: "{{ lookup('env','HOME') }}/.tmux/plugins/tpm"
+    owner: root
+    group: root
+    mode: 0755
+  when: ansible_facts.architecture == "x86_64"
+
