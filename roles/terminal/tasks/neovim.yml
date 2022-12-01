@@ -1,0 +1,31 @@
+---
+- name: Is neovim installed
+  shell: command -v nvim
+  register: nvim_exists
+  ignore_errors: true
+
+- name: Download Neovim
+  git:
+    repo: https://github.com/neovim/neovim.git
+    dest: "{{ lookup('env','HOME') }}/neovim"
+    clone: true
+    update: true
+  when: nvim_exists is not defined
+
+- name: Running "make" for Neovim
+  command: "{{ item }} chdir={{ lookup('env','HOME') }}/neovim"
+  with_items:
+    - make
+  when: nvim_exists is not defined
+
+- name: Running "make install" for Neovim
+  command: "make install chdir={{ lookup('env','HOME') }}/neovim"
+  when: nvim_exists is not defined
+
+- name: Remove neovim install catalog
+  file:
+    path: "{{ lookup('env','HOME') }}/neovim"
+    state: absent
+  when: nvim_exists is not defined
+
+

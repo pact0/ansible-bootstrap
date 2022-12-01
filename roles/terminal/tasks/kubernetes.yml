@@ -1,0 +1,43 @@
+---
+
+# kubectl
+- name: Check if kubectl is installed
+  shell: command -v kubectl
+  register: kubectl_exists
+  ignore_errors: true
+
+- name: Get kubectl newest version
+  shell: echo https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+  register: kubectl_version
+
+- debug: var=kubectl_version.stdout_lines[0]
+
+- name: Download kubectl binary
+  get_url:
+    url: "{{kubectl_version.stdout_lines[0]}}"
+    dest: "{{ lookup('env', 'HOME') }}/kubectl_tmp"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install kubectl
+  become_user: root
+  shell: "install {{ lookup('env', 'HOME') }}/kubectl_tmp /usr/local/bin/kubectl"
+  when: kubectl_exists is not defined
+
+- name: Remove kubectl install catalog
+  file:
+    path: "{{ lookup('env','HOME') }}/kubectl_tmp"
+    state: absent
+  when: kubectl_exists is not defined
+
+
+#helm
+- name: Check if helm is installed
+  shell: command -v helm
+  register: helm_exists
+  ignore_errors: true
+
+- name: Install helm
+  shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  when: helm_exists is not defined

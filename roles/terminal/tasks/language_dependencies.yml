@@ -1,0 +1,54 @@
+---
+
+# Python
+- name: check is pyenv installed
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.pyenv/"
+  register: pyenv_exists
+  ignore_errors: true
+
+- name: install pyenv
+  when: pyenv_exists is failed
+  shell: 
+    curl https://pyenv.run | bash
+
+- name: check python is in update-alternatives
+  shell: update-alternatives --query python
+  register: python_alternative_exists
+  ignore_errors: true
+
+- name: set python3 as default python
+  when: python_alternative_exists is failed
+  become_user: root
+  shell: update-alternatives --install {{ lookup('env', 'HOME') }}/.local/bin/python python `which python3` 20
+
+
+- name: install python3 poetry
+  become_user: root
+  shell: curl -sSL https://install.python-poetry.org | python3 -
+
+# Rust
+- name: Check if cargo is installed
+  shell: command -v cargo
+  register: cargo_exists
+  ignore_errors: true
+
+- name: Download Installer
+  when: cargo_exists is failed
+  get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/sh.rustup.rs
+    mode: '0755'
+    force: 'yes'
+
+- name: Install rust/cargo
+  shell: /tmp/sh.rustup.rs -y
+  when: cargo_exists is failed
+
+
+#typescript
+- name: Install typescript
+  npm:
+    name: typescript
+    global: yes
+    state: present

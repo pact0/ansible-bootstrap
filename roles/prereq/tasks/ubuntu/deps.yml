@@ -36,3 +36,24 @@
       - tree
       - unzip
       - webp
+      - zsh
+      - tar
+      - wget
+      - bat
+      - nodejs
+      - npm
+      - fish
+      - shellcheck
+      - docker
+      - ripgrep
+      - tmux
+
+
+- name: Check if bat is in correct place
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.local/bin/bat"
+  register: bat_exists
+
+- name: Fix bat location
+  shell: mkdir -p {{ lookup('env', 'HOME') }}/.local/bin && ln -s /usr/bin/batcat {{ lookup('env', 'HOME') }}/.local/bin/bat
+  when: bat_exists is not defined

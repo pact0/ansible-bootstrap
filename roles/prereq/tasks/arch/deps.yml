@@ -1,40 +1,42 @@
-- name: Install packages
-  community.general.pacman:
-    name: 
-      - cmake
-      - base-devel
-      - unzip
-      - ninja
-      - tree-sitter
-      - curl
-    state: present
+# - name: Install packages
+#   community.general.pacman:
+#     name: 
+#       - cmake
+#       - base-devel
+#       - unzip
+#       - ninja
+#       - tree-sitter
+#       - curl
+#       - zsh
+#       - bat
+#     state: present
 
 
-# - name: Install yay
-#
-- name: Check if yay is installed
-  stat:
-    command: which yay
-  register: yay_installed
+# # - name: Install yay
+# #
+# - name: Check if yay is installed
+#   stat:
+#     command: which yay
+#   register: yay_installed
 
-- name: Download Yay
-  git:
-    repo: https://aur.archlinux.org/yay.git
-    dest: "{{ lookup('env','HOME') }}/yay"
-    # owner: "{{ansible_user}}"
-    # group: "{{ansible_user}}"
-    # mode: 0755
-    clone: true
-    update: true
-  when: yay_installed is not defined
+# - name: Download Yay
+#   git:
+#     repo: https://aur.archlinux.org/yay.git
+#     dest: "{{ lookup('env','HOME') }}/yay"
+#     # owner: "{{ansible_user}}"
+#     # group: "{{ansible_user}}"
+#     # mode: 0755
+#     clone: true
+#     update: true
+#   when: yay_installed is not defined
 
-- name: Running "makepkg" for yay
-  command: "{{ item }} chdir={{ lookup('env','HOME') }}/yay && makepkg -it --noconfirm"
-  when: yay_installed is not defined
+# - name: Running "makepkg" for yay
+#   command: "{{ item }} chdir={{ lookup('env','HOME') }}/yay && makepkg -it --noconfirm"
+#   when: yay_installed is not defined
 
 
-- name: Remove yay install catalog
-  file:
-    path: "{{ lookup('env','HOME') }}/yay"
-    state: absent
-  when: yay_installed is not defined
+# - name: Remove yay install catalog
+#   file:
+#     path: "{{ lookup('env','HOME') }}/yay"
+#     state: absent
+#   when: yay_installed is not defined

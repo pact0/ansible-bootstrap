@@ -1,0 +1,39 @@
+---
+
+# fzf
+- name: check is fzf installed
+  shell: command -v fzf
+  register: fzf_exists
+  ignore_errors: true
+
+- name: Install fzf
+  shell: |
+        git clone --depth 1 https://github.com/junegunn/fzf.git {{ lookup('env', 'HOME') }}/.fzf && \
+        {{ lookup('env', 'HOME') }}/.fzf/install --all
+        cp {{ lookup('env', 'HOME') }}/.fzf/bin/fzf {{ lookup('env', 'HOME') }}/.local/bin
+  when: fzf_exists is failed
+
+
+# zoxide
+- name: Check if zoxide is installed
+  shell: command -v z
+  register: zoxide_exists
+  ignore_errors: true
+
+- name: Install zoxide
+  shell: curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+  when: zoxide_exists is failed
+
+#
+- name: Install exa 
+  shell: "{{ lookup('env', 'HOME') }}/.cargo/bin/cargo install exa"
+
+- name: Install fd 
+  shell: "{{ lookup('env', 'HOME') }}/.cargo/bin/cargo install fd-find"
+
+
+- name: Install lazygit
+  shell: go install github.com/jesseduffield/lazygit@latest
+
+- name: Install lazydocker
+  shell: go install github.com/jesseduffield/lazydocker@latest

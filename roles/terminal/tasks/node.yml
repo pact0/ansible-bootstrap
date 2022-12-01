@@ -1,0 +1,29 @@
+---
+- name: Set Global npm directory
+  shell: |
+    mkdir "{{ lookup('env', 'HOME') }}"/.local/.npm-global
+    npm config set prefix '~/.local/.npm-global'
+
+- name: include node_modules path in .profile
+  blockinfile:
+    dest: "{{ lookup('env', 'HOME') }}/.profile"
+
+    marker: '# {mark} npm-global bin added by devtainer'
+    block: |
+      # set PATH so it includes user's npm-global bin if it exists
+      if [ -d "$HOME/.local/.npm-global/bin/" ] ; then
+        PATH="$PATH:$HOME/.local/.npm-global/bin/"
+      fi
+    state: present
+  become: true
+
+- name: Install N
+  npm:
+    name: n
+    global: yes
+
+- name: Install yarn
+  npm:
+    name: yarn
+    global: yes
+    state: present

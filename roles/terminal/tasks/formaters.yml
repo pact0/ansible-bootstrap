@@ -1,0 +1,38 @@
+---
+# linters
+- name: Install eslint
+  npm:
+    name: eslint
+    global: yes
+    state: present
+
+- name: Install stylelint
+  npm:
+    name: stylelint
+    global: yes
+    state: present
+
+# - name: Download rust-analyzer
+#   uri:
+#     url: https://github.com/rust-lang/rust-analyzer.git
+#     dest: "{{ lookup('env', 'HOME') }}/rust-analyzer"
+
+# - name: Install rust-analyzer
+#   
+#   community.general.cargo:
+#     name: rust-analyzer
+#     state: present
+
+# formaters
+- name: Install prettierd
+  npm:
+    name: "@fsouza/prettierd"
+    global: yes
+    state: present
+
+- name: Install prettier
+  npm:
+    name: prettier
+    global: yes
+    state: present
+

@@ -1,0 +1,51 @@
+---
+- name: Check if fisher is installed
+  shell: command -v fisher
+  register: fisher
+  ignore_errors: true
+
+- name: Install fisher 
+  shell: curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+  args:
+    executable: "/usr/bin/fish"
+  when: fisher is failed
+
+
+# plugins
+- name: Install 
+  shell: 'fish -c "fisher install PatrickF1/fzf.fish fzf.fish"'
+
+- name: Install 
+  shell: 'fish -c "fisher install danhper/fish-ssh-agent fish-ssh-agent"'
+
+- name: Install 
+  shell: 'fish -c "fisher install evanlucas/fish-kubectl-completions kubectl-completions"'
+
+- name: Install 
+  shell: 'fish -c "fisher install jorgebucaran/autopair.fish autopair.fish"'
+
+- name: Install 
+  shell: 'fish -c "fisher install jorgebucaran/nvm.fish nvm.fish"'
+
+- name: Install 
+  shell: 'fish -c "fisher install franciscolourenco/done done"'
+
+- name: Install 
+  shell: 'fish -c "fisher install jorgebucaran/replay.fish replay"'
+
+- name: Install 
+  shell: 'fish -c "fisher install lgathy/google-cloud-sdk-fish-completion gcloud-completion"'
+
+- name: Check if starship is installed
+  shell: command -v starship
+  register: starship_exists
+  ignore_errors: true
+
+- name: Install Starship
+  shell: "curl -sS https://starship.rs/install.sh -y| sh"
+  when: starship_exists is failed
+
+
+- name: Change shell to fish
+  become_user: root
+  shell: usermod --shell /usr/bin/fish {{ ansible_user }}
